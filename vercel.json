@@ -1,0 +1,25 @@
+{
+    "rewrites": [
+      {
+        "source": "/home/(.*)",
+        "destination": "/home"
+      },
+      {
+        "source": "/home/carRegistration/(.*)",
+        "destination": "/home/carRegistration"
+      },
+      {
+        "source": "/home/auction/(.*)",
+        "destination": "/home/auction"
+      },
+      {
+        "source": "/home/auction/:id/(.*)",
+        "destination": "/home/auction/:id"
+      },
+      {
+        "source": "/(.*)",
+        "destination": "/"
+      }
+    ]
+  }
+  
