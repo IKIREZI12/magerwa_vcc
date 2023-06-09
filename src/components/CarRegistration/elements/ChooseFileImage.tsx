@@ -11,6 +11,7 @@ interface ChooseFileImageProps {
 
 const ChooseFileImage: React.FC<ChooseFileImageProps> = ({ title, onSelect, selected, error, fullWidth = true }) => {
   const handleClickUpload = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log(e.target);
     const input = document.getElementById('choose-file-upload') as HTMLInputElement;
     input?.click();
   };
