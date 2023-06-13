@@ -1,7 +1,9 @@
-
+import AuctionDetailsComponent from "../../../components/Auction/AuctionDetailsComponent"
 const AuctionDetails = () => {
   return (
-    <div>AuctionDetails</div>
+    <div>
+      <AuctionDetailsComponent />
+    </div>
   )
 }
 

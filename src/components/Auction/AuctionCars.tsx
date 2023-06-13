@@ -11,7 +11,7 @@ import {
     Pagination,
     useMediaQuery,
     TextField,
-    Divider
+    Divider, Button
 } from "@mui/material"
 import YearFilter from './elements/YearFilter';
 import BrandFilter from './elements/BrandFilter';
@@ -26,21 +26,35 @@ import { auctionCars } from "./data/Cars";
 
 const AuctionCars = () => {
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
+    const hasRegisteredCar = true
   return (
     <Box>
         <Card
         sx={{
             padding: 3,
-            marginTop: 4
+            marginTop: 4,
+            display: "flex",
+            flexDirection: matcheBigDevices ? "row" : "column",
+            justifyContent: "space-between",
+            alignItems: matcheBigDevices ? "center" : "start",
+            gap: matcheBigDevices ? 0 : 5
         }}
         >
-            <Typography variant="h4" color="primary" marginBottom={2} fontWeight='bold'>Auction Cars</Typography>
-            <Breadcrumbs aria-label="breadcrumb">
-                <Link underline="hover" color="inherit" href="/home">
-                    Home
-                </Link>
-                <Typography color="text.primary">Auction</Typography>
-            </Breadcrumbs>
+            <Box>
+                <Typography variant="h4" color="primary" marginBottom={2} fontWeight='bold'>Auction Cars</Typography>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link underline="hover" color="inherit"></Link>
+                    <Typography color="text.primary">Auction</Typography>
+                </Breadcrumbs>
+            </Box>
+            {
+                hasRegisteredCar &&
+                <Link href="/addtoauction">
+                    <Button variant="contained" color="primary">
+                        Put your car to Auction
+                    </Button>
+                </Link> 
+            }        
         </Card>
         <Grid container spacing={3}>
             {
@@ -154,10 +168,12 @@ const AuctionCars = () => {
                                 </Stack>  
                                 <Divider />
                                 <Link
+                                href="/auction/123"
                                 underline="none"
                                 sx={{
                                     fontSize: '15px',
                                     display: 'flex',
+                                    cursor: 'pointer',
                                     alignItems: 'center',
                                     gap: "5px",
                                     fontWeight: 'bold'

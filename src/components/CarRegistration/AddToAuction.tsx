@@ -27,7 +27,7 @@ import { transmissionsData } from "./elements/TransmissionsData";
 import { drivetrainTypesData } from "./elements/DriveTrains";
 import { carFeaturesData } from "./elements/CarFeatures";
 
-const CarRegistration = () => {
+const AddToAuction = () => {
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
     const handleSelect = () => {
         console.log("Selected")
@@ -41,10 +41,10 @@ const CarRegistration = () => {
             marginTop: 4
         }}
         >
-            <Typography variant="h4" color="primary" marginBottom={2} fontWeight='bold'>Register your car</Typography>
+            <Typography variant="h4" color="primary" marginBottom={2} fontWeight='bold'>Put your car to Auction</Typography>
             <Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit"></Link>
-                <Typography color="text.primary">Car Registration</Typography>
+                <Typography color="text.primary">Add to auction</Typography>
             </Breadcrumbs>
         </Card>
 
@@ -342,11 +342,11 @@ const CarRegistration = () => {
         </Card>
         <Stack justifyContent='center' alignItems="center" marginTop={5}>
             <Button variant="contained" color="primary" sx={{ width: matcheBigDevices ? '40%' : '100%' }}>
-            Register my car
+                Put my car to auction
             </Button>
         </Stack>
     </Box>
   )
 }
 
-export default CarRegistration
+export default AddToAuction
