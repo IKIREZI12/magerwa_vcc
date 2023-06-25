@@ -1,5 +1,4 @@
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
-import { Link } from 'react-router-dom';
+import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import {
   Paper,
   Typography,
@@ -7,11 +6,12 @@ import {
   Button, 
 } from "@mui/material"
 
-interface NotFoundPageProps {
+interface VerifiedProps {
   // Add any props if needed
 }
 
-const NotFoundPage: React.FC<NotFoundPageProps> = () => {
+const Verified: React.FC<VerifiedProps> = () => {
+    
   return (
     <Box
       sx={{
@@ -35,14 +35,13 @@ const NotFoundPage: React.FC<NotFoundPageProps> = () => {
           border: '1px solid #55BDB3',
         }}
       >
-        <ReportProblemIcon style={{ fontSize: '3rem', color: '#55BDB3' }} />
+        <DoneOutlineIcon style={{ fontSize: '3rem', color: '#55BDB3' }} />
 
         <Typography variant="body1" style={{ marginBottom: '1rem', marginTop: '1rem' }}>
-          The page you're looking for is not available
+          Email verified successfully!
         </Typography>
         <Button
-          component={Link}
-          to="/"
+          onClick={() => window.close()}
           sx={{
             fontSize: '0.8rem',
             backgroundColor: '#55BDB3',
@@ -56,7 +55,7 @@ const NotFoundPage: React.FC<NotFoundPageProps> = () => {
           }}
           variant="contained"
         >
-          Go Home
+          Close this page
         </Button>
       </Paper>
     </Box>
@@ -64,4 +63,4 @@ const NotFoundPage: React.FC<NotFoundPageProps> = () => {
   );
 };
 
-export default NotFoundPage;
+export default Verified;
