@@ -20,7 +20,6 @@ import MobileMenuLinks from './elements/MobileMenuLinks';
 import MenuLinks from './elements/MenuLinks';
 import { getUser, logoutUser } from '../../../redux/thunks/auth';
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
 
 const HomeNavbar = () => {
     const dispatch = useDispatch<any>();

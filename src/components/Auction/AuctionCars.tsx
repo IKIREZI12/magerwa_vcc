@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
     Box,
     Card,
@@ -20,13 +21,23 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import Groups2Icon from '@mui/icons-material/Groups2';
-import WifiIcon from '@mui/icons-material/Wifi';
+import ElectricCarIcon from '@mui/icons-material/ElectricCar';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
-import { auctionCars } from "./data/Cars";
+import DataWidget from "../../utils/DataWidget";
+import { getAuctionCars } from "../../redux/thunks/auction";
+import { useDispatch, useSelector } from "react-redux";
 
 const AuctionCars = () => {
+    const dispatch = useDispatch<any>();
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
+    const { fetchLoading, auctionCars, paginationDetails, fetchError } = useSelector((state : any) => state.auction);
     const hasRegisteredCar = true
+
+    useEffect(() => {
+          dispatch(getAuctionCars());
+      }, []);
+
+
   return (
     <Box>
         <Card
@@ -112,80 +123,87 @@ const AuctionCars = () => {
                             </TextField>
                         </Grid>
                     </Grid> 
-                    { auctionCars.map((car, index) =>
-                    (<Card
-                    sx={{
-                        padding: 2,
-                        marginTop: 4,
-                        border: '1px solid #b0e0e6'
-                    }}
-                    key={index}
+                    <DataWidget
+                        title="Auction cars"
+                        isLoading={fetchLoading} 
+                        isError={fetchError}
+                        isEmpty={!auctionCars?.length}
                     >
-                        <Stack direction={matcheBigDevices ? "row" : "column"} gap={3}>
-                            <img src={car.picture} alt="" width={matcheBigDevices ? "50%" : "100%"} style={{borderRadius: '5px'}}/>
-                            <Stack gap={2}>
-                                <Typography 
-                                variant="body1" 
-                                color="primary"
-                                borderRadius={1}
-                                paddingX={1} 
-                                width={60}
-                                fontSize="small"
-                                textAlign="center"
-                                border={2}
-                                >
-                                    {car.condition}
-                                </Typography>
-                                <Typography variant="body1" color="initial">
-                                    {car.title}
-                                </Typography>
-                                <Typography variant="body1" color="primary" fontWeight="bold">
-                                    {car.price}
-                                </Typography>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center" gap={4}>
-                                    <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
-                                        <BrandingWatermarkIcon color="primary"/>
-                                        {car.brand}
+                        { auctionCars.map((car: any, index: number) =>
+                        (<Card
+                        sx={{
+                            padding: 2,
+                            marginTop: 4,
+                            border: '1px solid #b0e0e6'
+                        }}
+                        key={index}
+                        >
+                            <Stack direction={matcheBigDevices ? "row" : "column"} gap={3}>
+                                <img src={car.carImage} alt="" width={matcheBigDevices ? "50%" : "100%"} style={{borderRadius: '5px'}}/>
+                                <Stack gap={2}>
+                                    <Typography 
+                                    variant="body1" 
+                                    color="primary"
+                                    borderRadius={1}
+                                    paddingX={1} 
+                                    width={60}
+                                    fontSize="small"
+                                    textAlign="center"
+                                    border={2}
+                                    >
+                                        {car.condition}
+                                    </Typography>
+                                    <Typography variant="body1" color="initial">
+                                        {car.carName}
+                                    </Typography>
+                                    <Typography variant="body1" color="primary" fontWeight="bold">
+                                        {car.carPrice}
+                                    </Typography>
+                                    <Stack direction="row" justifyContent="space-between" alignItems="center" gap={4}>
+                                        <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
+                                            <BrandingWatermarkIcon color="primary"/>
+                                            {car.brand}
+                                        </Stack>
+                                        <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
+                                            <CalendarMonthIcon color="primary"/>
+                                            {car.year}
+                                        </Stack>
                                     </Stack>
-                                    <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
-                                        <CalendarMonthIcon color="primary"/>
-                                        {car.year}
-                                    </Stack>
+                                    <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
+                                        <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
+                                            <LocalGasStationIcon color="primary"/>
+                                            {car.fuelType}
+                                        </Stack>
+                                        <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
+                                            <ElectricCarIcon color="primary"/>
+                                            {car.transmission}
+                                        </Stack>
+                                        <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
+                                            <Groups2Icon color="primary"/>
+                                            {car.passengerCapacity}
+                                        </Stack>
+                                    </Stack>  
+                                    <Divider />
+                                    <Link
+                                    href={`/auction/${car._id}`}
+                                    underline="none"
+                                    sx={{
+                                        fontSize: '15px',
+                                        display: 'flex',
+                                        cursor: 'pointer',
+                                        alignItems: 'center',
+                                        gap: "5px",
+                                        fontWeight: 'bold'
+                                    }}
+                                    >
+                                        View Details
+                                        <ArrowRightAltIcon />
+                                    </Link>
                                 </Stack>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
-                                    <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
-                                        <LocalGasStationIcon color="primary"/>
-                                        {car.fuelType}
-                                    </Stack>
-                                    <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
-                                        <WifiIcon color="primary"/>
-                                        {car.hasWifi ? 'WIFI' : 'None'}
-                                    </Stack>
-                                    <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
-                                        <Groups2Icon color="primary"/>
-                                        {car.passengerSize}
-                                    </Stack>
-                                </Stack>  
-                                <Divider />
-                                <Link
-                                href="/auction/123"
-                                underline="none"
-                                sx={{
-                                    fontSize: '15px',
-                                    display: 'flex',
-                                    cursor: 'pointer',
-                                    alignItems: 'center',
-                                    gap: "5px",
-                                    fontWeight: 'bold'
-                                }}
-                                >
-                                    View Details
-                                    <ArrowRightAltIcon />
-                                </Link>
                             </Stack>
-                        </Stack>
-                    </Card>
-                    ))}
+                        </Card>
+                        ))}
+                    </DataWidget>
                     <Stack spacing={2} justifyContent="center" alignItems="center" marginTop={5}>
                         <Pagination count={3} color="primary" variant="outlined" shape="rounded" />
                     </Stack>
