@@ -7,6 +7,7 @@ import LogoIcon from '../../../assets/logo.png'
 import { loginUser } from '../../../redux/thunks/auth';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const initialState = { email: '', password: '' };
 
@@ -30,9 +31,10 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (LoginSuccess) {
-      setLoginMessage(LoginSuccess);
+      setLoginMessage('redirecting...');
       setLoginMessageColor('#357a38');
       navigate("/registercar")
+      toast.success(LoginSuccess)
     } 
     else if (LoginError) {
       setLoginMessage(LoginError);

@@ -45,29 +45,3 @@ export const addToAuction = createAsyncThunk
 );
 
 
-export const getAuctionCars = createAsyncThunk(
-  "auction/getAuctionCars",
-  async () => {
-    try {
-      const result = await API.get("/auction");
-      if (!result.data.data) {
-        throw new Error("Failed to retrieve auction cars. Please try again.");
-      }
-      return {
-        auctionCars: result.data.data,
-        paginationDetails: result.data.paginationDetails,
-        error: null,
-      };
-    } catch (error: any) {
-      return {
-        error: {
-          message:
-            error.response?.data?.message ||
-            error.message ||
-            "Unknown error occurred, please try again.",
-        },
-      };
-    }
-  }
-);
-

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect, ChangeEvent } from "react";
 import {
     Box,
     Card,
@@ -24,19 +24,94 @@ import Groups2Icon from '@mui/icons-material/Groups2';
 import ElectricCarIcon from '@mui/icons-material/ElectricCar';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import DataWidget from "../../utils/DataWidget";
-import { getAuctionCars } from "../../redux/thunks/auction";
-import { useDispatch, useSelector } from "react-redux";
+import { useFetcher } from "../../redux/api";
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const AuctionCars = () => {
-    const dispatch = useDispatch<any>();
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
-    const { fetchLoading, auctionCars, paginationDetails, fetchError } = useSelector((state : any) => state.auction);
-    const hasRegisteredCar = true
+    const location = useLocation();
+    const navigate = useNavigate();
+    const queryParams = new URLSearchParams(location.search);
+    const [searchQuerry, setSearchQuerry] = useState(queryParams.get('keyword') || '')
+    const [currentPage, setCurrentPage] = useState<number>(Number(queryParams.get('page')) || 1);
+    const queryString = `?${queryParams.toString()}`;
+    const url = `/auction${queryString}`;
+    const { data, isError, isLoading } = useFetcher(url);
+    const hasRegisteredCar = true;
+    const { auctionCars, paginationDetails } = useMemo(() => {
+        if (data?.data?.length) {
+          return { auctionCars: data?.data, paginationDetails: data?.paginationDetails };
+        }
+        return { auctionCars: [], paginationDetails: {} };
+      }, [data?.data]);
+
+      console.log(paginationDetails)
 
     useEffect(() => {
-          dispatch(getAuctionCars());
-      }, []);
+    window.scrollTo(0, 280);
+    }, [queryParams]);
 
+    const handleSearchAuction = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setSearchQuerry(value);
+
+        if (value.trim() !== '') {
+            if(queryParams.get('page')){
+                queryParams.set('page', "1");
+            }
+            queryParams.set('keyword', value);
+          } else {
+            queryParams.delete('keyword');
+          }
+          const newSearch = queryParams.toString() ? `?${queryParams.toString()}` : '';
+        
+          navigate(newSearch)
+    }
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+        setCurrentPage(page);
+        queryParams.set('page', page.toString());
+        navigate(`?${queryParams.toString()}`);
+      };
+
+    const handleYearFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        if(queryParams.get('page')){
+            queryParams.set('page', "1");
+        }
+        queryParams.set('year', value);
+        navigate(`?${queryParams.toString()}`);
+      };
+
+    const handleBrandFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        if(queryParams.get('page')){
+            queryParams.set('page', "1");
+        }
+        queryParams.set('brand', value);
+        navigate(`?${queryParams.toString()}`);
+      };
+
+    const handleOldestSort = (event: React.ChangeEvent<unknown>) => {
+        if(queryParams.get('page')){
+            queryParams.set('page', "1");
+        }
+        queryParams.set('sortBy', "createdAt");
+        queryParams.set('sortOrder', "asc");
+        navigate(`?${queryParams.toString()}`);
+    };
+
+    const handleRemoveSort = (event: React.ChangeEvent<unknown>) => {
+        if(queryParams.get('page')){
+            queryParams.set('page', "1");
+        }
+        if(queryParams.get('sortBy') && queryParams.get('sortOrder')) {
+            queryParams.delete('sortBy');
+            queryParams.delete('sortOrder');
+        }
+        
+        navigate(`?${queryParams.toString()}`);
+    };
 
   return (
     <Box>
@@ -60,11 +135,13 @@ const AuctionCars = () => {
             </Box>
             {
                 hasRegisteredCar &&
-                <Link href="/addtoauction">
-                    <Button variant="contained" color="primary">
-                        Put your car to Auction
-                    </Button>
-                </Link> 
+                <NavLink to="/addtoauction" style={{ textDecoration: "none" }}>
+                    <Link>
+                        <Button variant="contained" color="primary">
+                            Put your car to Auction
+                        </Button>
+                    </Link> 
+                </NavLink>
             }        
         </Card>
         <Grid container spacing={3}>
@@ -79,8 +156,8 @@ const AuctionCars = () => {
                 >
                     <Typography color="initial" variant="body1" marginBottom={1} fontWeight='bold'>Filter</Typography>
                     <Divider variant="fullWidth" color="initial"/>
-                    <YearFilter />
-                    <BrandFilter />
+                    <YearFilter filteredYear={queryParams.get('year')} handleFilterYear={handleYearFilter}/>
+                    <BrandFilter filteredBrand={queryParams.get('brand')} handleFilterBrand={handleBrandFilter}/>
                 </Card>
             </Grid>
             }
@@ -95,6 +172,8 @@ const AuctionCars = () => {
                     id="search"
                     type="search"
                     label="Search"
+                    value={searchQuerry}
+                    onChange={handleSearchAuction}
                     fullWidth
                     InputProps={{
                         startAdornment: (
@@ -106,7 +185,7 @@ const AuctionCars = () => {
                     />
                     <Grid container alignItems="center" marginTop={3}>
                         <Grid item xs={4} md={6}>
-                         <Typography variant="h6" color="initial">20 Cars</Typography>
+                         {paginationDetails?.availableData && <Typography variant="h6" color="initial">{paginationDetails?.availableData} {paginationDetails?.availableData == 1 ? 'Car' : 'Cars'}</Typography>}
                         </Grid>
                         <Grid item xs={8} md={6}>
                             <TextField
@@ -114,19 +193,17 @@ const AuctionCars = () => {
                             id="outlined-select-currency"
                             select
                             label="Sort By"
-                            defaultValue="EUR"
+                            defaultValue="Latest"
                             >
-                                <MenuItem value={10}>Increasing order (Default)</MenuItem>
-                                <MenuItem value={20}>Decreasing order</MenuItem>
-                                <MenuItem value={30}>Latest</MenuItem>
-                                <MenuItem value={30}>Newest</MenuItem>
+                                <MenuItem selected value="Latest" onClick={handleRemoveSort}>Latest</MenuItem>
+                                <MenuItem value="Oldest" onClick={handleOldestSort}>Oldest</MenuItem>
                             </TextField>
                         </Grid>
                     </Grid> 
                     <DataWidget
-                        title="Auction cars"
-                        isLoading={fetchLoading} 
-                        isError={fetchError}
+                        title="Auction car"
+                        isLoading={isLoading} 
+                        isError={isError}
                         isEmpty={!auctionCars?.length}
                     >
                         { auctionCars.map((car: any, index: number) =>
@@ -157,7 +234,7 @@ const AuctionCars = () => {
                                         {car.carName}
                                     </Typography>
                                     <Typography variant="body1" color="primary" fontWeight="bold">
-                                        {car.carPrice}
+                                        {parseInt(car.carPrice).toLocaleString()} Rwf
                                     </Typography>
                                     <Stack direction="row" justifyContent="space-between" alignItems="center" gap={4}>
                                         <Stack direction="row" fontSize="medium" alignItems="center" gap={1}>
@@ -184,28 +261,36 @@ const AuctionCars = () => {
                                         </Stack>
                                     </Stack>  
                                     <Divider />
-                                    <Link
-                                    href={`/auction/${car._id}`}
-                                    underline="none"
-                                    sx={{
-                                        fontSize: '15px',
-                                        display: 'flex',
-                                        cursor: 'pointer',
-                                        alignItems: 'center',
-                                        gap: "5px",
-                                        fontWeight: 'bold'
-                                    }}
-                                    >
-                                        View Details
-                                        <ArrowRightAltIcon />
-                                    </Link>
+                                    <NavLink to={`/auction/${car._id}`} style={{ textDecoration: "none" }}>
+                                        <Link
+                                            underline="none"
+                                            sx={{
+                                                fontSize: '15px',
+                                                display: 'flex',
+                                                cursor: 'pointer',
+                                                alignItems: 'center',
+                                                gap: "5px",
+                                                fontWeight: 'bold'
+                                            }}
+                                        >
+                                            View Details
+                                            <ArrowRightAltIcon />
+                                        </Link>
+                                    </NavLink>
                                 </Stack>
                             </Stack>
                         </Card>
                         ))}
                     </DataWidget>
                     <Stack spacing={2} justifyContent="center" alignItems="center" marginTop={5}>
-                        <Pagination count={3} color="primary" variant="outlined" shape="rounded" />
+                        <Pagination
+                            count={paginationDetails?.totalPages}
+                            page={currentPage}
+                            color="primary"
+                            variant="outlined"
+                            shape="rounded"
+                            onChange={handlePageChange}
+                        />
                     </Stack>
                 </Card>
             </Grid>

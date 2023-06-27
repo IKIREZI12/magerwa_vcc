@@ -1,4 +1,5 @@
 export const carBrandsData = [
+    'All',
     'Toyota',
     'Honda',
     'Ford',

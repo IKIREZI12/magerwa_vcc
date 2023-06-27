@@ -20,6 +20,7 @@ import MobileMenuLinks from './elements/MobileMenuLinks';
 import MenuLinks from './elements/MenuLinks';
 import { getUser, logoutUser } from '../../../redux/thunks/auth';
 import { useDispatch, useSelector } from "react-redux";
+import toast from 'react-hot-toast';
 
 const HomeNavbar = () => {
     const dispatch = useDispatch<any>();
@@ -33,7 +34,7 @@ const HomeNavbar = () => {
       setAnchorEl(null);
     };
 
-    const { loggedInUser, FetchUserLoading, FetchUserError } = useSelector((state : any) => state.auth);
+    const { loggedInUser, FetchUserLoading, FetchUserError, LogoutSuccess, LogoutError } = useSelector((state : any) => state.auth);
 
   useEffect(() => {
     if (!loggedInUser) {
@@ -46,9 +47,15 @@ const HomeNavbar = () => {
 
   }, [loggedInUser, FetchUserError, FetchUserLoading]);
 
+
   const handleLogout = () => {
     dispatch(logoutUser())
-    window.location.href = "/";
+    if (LogoutSuccess) {
+        window.location.href = "/";
+    } 
+    if (LogoutError) {
+        toast.error(LogoutError)
+    } 
   }
 
   const shortenName = (name: string): string => {

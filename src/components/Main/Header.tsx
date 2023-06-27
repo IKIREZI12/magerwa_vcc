@@ -50,7 +50,7 @@ const Header = () => {
              Welcome to our platform, where car enthusiasts like you can easily register the imported 
              vehicles you've purchased from abroad. Streamline the process and ensure compliance as you 
              provide the necessary information and documentation for your imported cars, 
-             all in one convenient and user-friendly place.
+             all in a one convenient and user-friendly place.
             </Typography> 
             <SpeedDial
                 ariaLabel="SpeedDial basic example"

@@ -1,23 +1,28 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, FC } from 'react';
 import {
     Card,
     Typography,
     Link,
     FormGroup,
     FormControlLabel,
-    Checkbox,
+    Radio,
     Stack,
     Divider, TextField,
 } from "@mui/material"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { yearsData } from "../data/Years";
 
+interface YearFilterProps {
+  filteredYear: string | null,
+  handleFilterYear : (event: any) => void
+}
 
-const YearFilter = () => {
+const YearFilter : FC<YearFilterProps> = ({ filteredYear, handleFilterYear }) => {
     const [showMore, setShowMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredLabels, setFilteredLabels] = useState(yearsData.slice(0, 4));
     const [noResults, setNoResults] = useState(false);
+    const [selectedLabel, setSelectedLabel] = useState<string | null>(filteredYear || yearsData[0]);
   
     const handleSeeMoreClick = () => {
         setShowMore(!showMore);
@@ -31,6 +36,10 @@ const YearFilter = () => {
         } else {
           filterLabels(newSearchText);
         }
+      };
+
+      const handleLabelChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setSelectedLabel(event.target.value);
       };
     
       const filterLabels = (searchText: string) => {
@@ -68,7 +77,19 @@ const YearFilter = () => {
             />
             {filteredLabels.length > 0 ? (
                 filteredLabels.map((label, index) => (
-                    <FormControlLabel key={index} control={<Checkbox />} label={label} />
+                    <FormControlLabel 
+                      key={index} 
+                      control={
+                        <Radio
+                          checked={selectedLabel === label}
+                          onChange={handleLabelChange}
+                          value={label}
+                          onClick={handleFilterYear}
+                          name="radio-buttons"
+                        />
+                      } 
+                      label={label} 
+                    />
                 ))
                 ) : (
                 <Typography paddingY={3} color="red">{noResults && 'Year not found'}</Typography>

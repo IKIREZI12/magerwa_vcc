@@ -1,23 +1,28 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, FC } from 'react';
 import {
     Card,
     Typography,
     Link,
     FormGroup,
     FormControlLabel,
-    Checkbox,
+    Radio,
     Stack,
     Divider, TextField,
 } from "@mui/material"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { carBrandsData } from "../data/CarBrands";
 
+interface BrandFilterProps {
+  filteredBrand: string | null,
+  handleFilterBrand : (event: any) => void
+}
 
-const BrandFilter = () => {
+const BrandFilter : FC<BrandFilterProps> = ({ filteredBrand, handleFilterBrand }) => {
     const [showMore, setShowMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredLabels, setFilteredLabels] = useState(carBrandsData.slice(0, 4));
     const [noResults, setNoResults] = useState(false);
+    const [selectedLabel, setSelectedLabel] = useState<string | null>(filteredBrand || carBrandsData[0]);
   
     const handleSeeMoreClick = () => {
         setShowMore(!showMore);
@@ -31,6 +36,10 @@ const BrandFilter = () => {
         } else {
           filterLabels(newSearchText);
         }
+      };
+
+      const handleLabelChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setSelectedLabel(event.target.value);
       };
     
       const filterLabels = (searchText: string) => {
@@ -70,7 +79,19 @@ const BrandFilter = () => {
             />
             {filteredLabels.length > 0 ? (
                 filteredLabels.map((label, index) => (
-                    <FormControlLabel key={index} control={<Checkbox />} label={label} />
+                  <FormControlLabel 
+                    key={index} 
+                    control={
+                      <Radio
+                        checked={selectedLabel === label}
+                        onChange={handleLabelChange}
+                        value={label}
+                        name="radio-buttons"
+                        onClick={handleFilterBrand}
+                      />
+                    } 
+                    label={label} 
+                  />
                 ))
                 ) : (
                 <Typography paddingY={3} color="red">{noResults && 'Brand not found'}</Typography>

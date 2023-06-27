@@ -1,4 +1,5 @@
 export const yearsData = [
+    'All', 
     '2023', 
     '2022', 
     '2021', 

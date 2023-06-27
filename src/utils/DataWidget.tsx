@@ -44,7 +44,7 @@ const DataWidget: FC<DataWidgetProps> = ({ title, isLoading, isError = null, isE
     }
     if (isEmpty) {
         return (
-            <Container sx={{ py: 2 }}>
+            <Container sx={{ py: 5 }}>
                 <Alert severity="info" variant="outlined">
                     <AlertTitle>No {title ? title?.toLowerCase() : 'items'} found!</AlertTitle>
                     {customEmptyMessage
