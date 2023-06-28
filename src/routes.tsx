@@ -7,6 +7,7 @@ import HomeLayout from "./pages/Home/HomeLayout";
 import NotFoundPage from "./pages/NotFoundPage";
 import AddCar from "./pages/Home/Auction/AddCar";
 import Verified from "./pages/Verified";
+import RegisteredCars from "./pages/Home/RegisteredCars";
 
 const AppRoutes = () => {
     return (
@@ -16,6 +17,7 @@ const AppRoutes = () => {
         <Route path="/addtoauction" element={<HomeLayout> <AddCar /> </HomeLayout>} />
         <Route path="/auction" element={<HomeLayout> <Auction /> </HomeLayout>} />
         <Route path="/auction/:id" element={<HomeLayout> <AuctionDetails /> </HomeLayout>} />
+        <Route path="/yourcars" element={<HomeLayout> <RegisteredCars /> </HomeLayout>} />
         <Route path="/verified" element={<Verified />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

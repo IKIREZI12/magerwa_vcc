@@ -17,7 +17,7 @@ export default function LoginForm() {
   const [formData, setFormData] = useState(initialState);
   const [loginMessage, setLoginMessage] = useState<string | null>('');
   const [loginMessageColor, setLoginMessageColor] = useState('initial');
-  const { LoginSuccess, LoginError, loading } = useSelector((state : any) => state.auth);
+  const { LoginSuccess, checkUser, LoginError, loading } = useSelector((state : any) => state.auth);
   const dispatch = useDispatch<any>();
   const navigate = useNavigate()
 
@@ -31,9 +31,14 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (LoginSuccess) {
-      setLoginMessage('redirecting...');
+      setLoginMessage('Redirecting...');
       setLoginMessageColor('#357a38');
-      navigate("/registercar")
+      if(checkUser?.hasRegisteredCar){
+        navigate("/auction")
+      }
+      else{
+        navigate("/registercar")
+      }     
       toast.success(LoginSuccess)
     } 
     else if (LoginError) {

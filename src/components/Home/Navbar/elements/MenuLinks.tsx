@@ -4,13 +4,14 @@ import {
     Stack
 } from "@mui/material"
 import { NavLink } from 'react-router-dom';
+import { useSelector } from "react-redux";
 
 const MenuLinks = () => {
     const location = useLocation();
-    const hasRegisteredCar = true;
+    const { loggedInUser } = useSelector((state : any) => state.auth);
 
   return (
-    <Stack direction={hasRegisteredCar ? "row-reverse" : "row"} justifyContent="space-between" gap={5} alignItems="center">
+    <Stack direction={loggedInUser?.hasRegisteredCar ? "row-reverse" : "row"} justifyContent="space-between" gap={5} alignItems="center">
         <NavLink to="/registercar" style={{ textDecoration: "none" }}>
             <Link
                 underline="none"

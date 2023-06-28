@@ -15,15 +15,18 @@ import { useState, useEffect } from 'react';
 import LogoIcon from '../../../assets/logo.png'
 import { StyledBadge } from "./elements/StyledBadge";
 import KeyboardArrowDownSharpIcon from '@mui/icons-material/KeyboardArrowDownSharp';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
 import MobileMenuLinks from './elements/MobileMenuLinks';
 import MenuLinks from './elements/MenuLinks';
 import { getUser, logoutUser } from '../../../redux/thunks/auth';
 import { useDispatch, useSelector } from "react-redux";
 import toast from 'react-hot-toast';
+import { useNavigate, NavLink } from 'react-router-dom';
 
 const HomeNavbar = () => {
     const dispatch = useDispatch<any>();
+    const navigate = useNavigate();
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -47,11 +50,11 @@ const HomeNavbar = () => {
 
   }, [loggedInUser, FetchUserError, FetchUserLoading]);
 
-
   const handleLogout = () => {
     dispatch(logoutUser())
     if (LogoutSuccess) {
-        window.location.href = "/";
+        setAnchorEl(null);
+        navigate('/')
     } 
     if (LogoutError) {
         toast.error(LogoutError)
@@ -127,6 +130,14 @@ const HomeNavbar = () => {
                     'aria-labelledby': 'basic-button',
                 }}
                 >
+                <NavLink to="/yourcars" style={{ textDecoration: "none", color: '#000000DE'}} onClick={handleClose}>
+                    <MenuItem>
+                        <ListItemIcon>
+                            <DirectionsCarIcon/>
+                        </ListItemIcon>
+                        <ListItemText>Registered Cars</ListItemText>
+                    </MenuItem>
+                </NavLink>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <LogoutSharpIcon sx={{ transform: 'rotate(180deg)' }}/>

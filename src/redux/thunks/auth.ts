@@ -4,6 +4,7 @@ import { API } from "../api";
 
 interface SuccessResponse {
   successMessage: string;
+  checkUser?: object | undefined;
   error: null;
 }
 
@@ -56,6 +57,7 @@ export const loginUser = createAsyncThunk
       }
       return {
         successMessage: result.data.successMessage,
+        checkUser: result.data.data,
         error: null,
       };
     } catch (error: any) {

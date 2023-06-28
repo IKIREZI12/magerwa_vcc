@@ -11,6 +11,7 @@ const initialState = {
   LoginSuccess: '',
   LogoutSuccess: '',
   loggedInUser: null,
+  checkUser: undefined as object | undefined,
   loading: false,
   FetchUserLoading: false,
   SignUpError: null as string | null,
@@ -44,6 +45,7 @@ export const createUserSlice = createSlice({
     .addCase(loginUser.fulfilled, (state, action) => {
       const payload = action.payload
       if ("successMessage" in payload) state.LoginSuccess = payload.successMessage;
+      if ("checkUser" in payload) state.checkUser = payload.checkUser;
       if ("error" in payload) state.LoginError = payload.error?.message || null;
       state.loading = false;
     });

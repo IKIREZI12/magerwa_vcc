@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
     Box,
     Card,
@@ -10,14 +11,32 @@ import {
     Link,
 } from "@mui/material"
 import FeatureLabel from "./elements/FeatureLabel"
-import Car1 from '../../assets/cars/car1.jpg'
-import { detailedFeatures } from "./elements/DetailedFeatures"
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import EmailIcon from '@mui/icons-material/Email';
+import { useFetcher } from "../../redux/api";
+import { useParams, NavLink } from "react-router-dom";
+import DataWidget from "../../utils/DataWidget";
 
 const AuctionDetailsComponent = () => {
+    const { id } = useParams();
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
+    const { data, isError, isLoading } = useFetcher(`/auction/carDetails?carId=${id}`);
+
+    const { detailedCar } = useMemo(() => {
+        if (data?.data?.length) {
+          return { detailedCar: data?.data };
+        }
+        return { detailedCar: {} };
+      }, [data?.data]);
+
+    console.log(data);
   return (
+    <DataWidget
+        title="Auction car"
+        isLoading={isLoading} 
+        isError={isError}
+        isEmpty={!detailedCar}
+    >   
     <Box>
         <Card
             sx={{
@@ -25,9 +44,11 @@ const AuctionDetailsComponent = () => {
                 marginTop: 4
             }}
             >
-                <Typography variant="h5" color="primary" marginBottom={2} fontWeight='bold'>Mercedes-Benz AutoTrade UK</Typography>
+                <Typography variant="h5" color="primary" marginBottom={2} fontWeight='bold'>{detailedCar.carName}</Typography>
                 <Breadcrumbs aria-label="breadcrumb">
-                    <Link color="inherit" underline="hover" href="/auction">Auction</Link>
+                    <NavLink to="/auction" style={{ textDecoration: "none", color: "grey" }}>
+                        <Link color="inherit" underline="hover">Auction</Link>
+                    </NavLink>
                     <Typography color="text.primary">Car Detail</Typography>
                 </Breadcrumbs>
         </Card>
@@ -37,7 +58,7 @@ const AuctionDetailsComponent = () => {
                 marginTop: 2
             }}
             >
-            <img src={Car1} alt="car" width="100%"/>
+            <img src={detailedCar.carImage} alt="car" width="100%"/>
             <Grid container spacing={0}>
               <Grid item xs={12} md={8}>
                 <Stack
@@ -51,10 +72,10 @@ const AuctionDetailsComponent = () => {
                             <Typography variant="h6" color="primary" marginBottom={3} fontWeight='bold'>Features</Typography>
                             <Stack direction="row" gap={2} sx={{ flexWrap: 'wrap' }}>
                                 {
-                                    detailedFeatures.map((feature, index) => {
+                                    detailedCar.features?.map((feature : string, index: number) => {
                                         return (
                                         <Box key={index}>
-                                            <FeatureLabel labelName={feature.label}/>
+                                            <FeatureLabel labelName={feature}/>
                                         </Box>  
                                         )
                                     })
@@ -122,7 +143,7 @@ const AuctionDetailsComponent = () => {
                         borderRadius: 1
                     }}
                     >
-                        50,000,000 Rwf
+                        {parseInt(detailedCar.carPrice).toLocaleString()} Rwf
                     </Typography> 
                     <Card
                     sx={{
@@ -136,31 +157,31 @@ const AuctionDetailsComponent = () => {
                             <Stack gap={1} marginTop={2}>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Brand</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">BMW</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.brand}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Model</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">Model 3</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.model}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Condition</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">New</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.condition}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Year</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">2019</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.year}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Body Type</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">Sedan</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.bodyType}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Seats</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">5 People</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.passengerCapacity} People</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Exterior Color</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">Red</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.exteriorColor}</Typography>
                                 </Stack>
                                 <Divider color="initial" sx={{ marginTop: 1 }}/>
                             </Stack>
@@ -171,51 +192,24 @@ const AuctionDetailsComponent = () => {
                             <Stack gap={1} marginTop={2}>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Fuel Type</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">Electric</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.fuelType}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Mileage</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">340 km</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.mileage} km</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Trasmission</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">Automatic</Typography>
-                                </Stack>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="body2" color="initial">Year</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">2019</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.transmission}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Drivetrain</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">Rear-wheel drive</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.drivetrain}</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Power</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">283 hp (211 KW)</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.power} hp</Typography>
                                 </Stack>
-                                <Divider color="initial" sx={{ marginTop: 1 }}/>
-                            </Stack>
-                        </Box>
-
-                        <Box sx={{ marginTop: 4 }}>
-                            <Typography variant="body1" fontWeight="bold" color="initial">Battery and Charging</Typography>
-                            <Stack gap={1} marginTop={2}>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="body2" color="initial">Battery Capacity</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">55.0 KWh</Typography>
-                                </Stack>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="body2" color="initial">Charge Speed</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">64 km/h</Typography>
-                                </Stack>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="body2" color="initial">Charge Port</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">Type 2</Typography>
-                                </Stack>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                    <Typography variant="body2" color="initial">Charge Time</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">330 minutes</Typography>
-                                </Stack> 
                                 <Divider color="initial" sx={{ marginTop: 1 }}/>
                             </Stack>
                         </Box>
@@ -225,19 +219,19 @@ const AuctionDetailsComponent = () => {
                             <Stack gap={1} marginTop={2}>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Length</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">4694 mm</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.length} mm</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Width</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">1849 mm</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.width} mm</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Height</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">1443 mm</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.height} mm</Typography>
                                 </Stack>
                                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                                     <Typography variant="body2" color="initial">Cargo Volume</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">542 L</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.cargoVolume} L</Typography>
                                 </Stack>
                             </Stack>
                         </Box>
@@ -250,6 +244,7 @@ const AuctionDetailsComponent = () => {
             
         </Card>
     </Box>
+    </DataWidget>
   )
 }
 

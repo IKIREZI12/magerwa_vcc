@@ -17,15 +17,15 @@ interface CarData {
   [key: string]: unknown;
 }
 
-export const addToAuction = createAsyncThunk
+export const RegisterCar = createAsyncThunk
   < SuccessResponse | ErrorResponse, CarData >
 (
-  "auction/addToAuction",
+  "registercar/carRegistration",
   async (carData) => {
     try {
-      const result = await API.post("/auction", carData);
+      const result = await API.post("/registercar", carData);
       if (!result.data.successMessage) {
-        throw new Error("Failed to add your car to auction. Please try again.");
+        throw new Error("Failed to register your car. Please try again.");
       }
       return {
         successMessage: result.data.successMessage,
