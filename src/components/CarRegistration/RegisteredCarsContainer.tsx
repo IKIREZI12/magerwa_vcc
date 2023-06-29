@@ -165,7 +165,7 @@ const RegisteredCarsContainer = () => {
                         key={index}
                         >
                             <Stack direction="column" gap={3}>
-                                <img src={car.carImage} alt="" width="100%" height={250} style={{borderRadius: '5px'}}/>
+                                <img src={car.carImage} alt="" width="100%" height={250} style={{borderRadius: '5px', objectFit: "cover"}}/>
                                 <Stack gap={2}>
                                     <Typography 
                                     variant="body1" 
