@@ -17,6 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import DataWidget from "../../utils/DataWidget";
 import { useFetcher } from "../../redux/api";
 import { useLocation, useNavigate } from 'react-router-dom';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const RegisteredCarsContainer = () => {
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
@@ -28,11 +29,11 @@ const RegisteredCarsContainer = () => {
     const queryString = `?${queryParams.toString()}`;
     const url = `/registercar/userCars${queryString}`;
     const { data, isError, isLoading } = useFetcher(url);
-    const { auctionCars, paginationDetails } = useMemo(() => {
+    const { yourCars, paginationDetails } = useMemo(() => {
         if (data?.data?.length) {
-          return { auctionCars: data?.data, paginationDetails: data?.paginationDetails };
+          return { yourCars: data?.data, paginationDetails: data?.paginationDetails };
         }
-        return { auctionCars: [], paginationDetails: {} };
+        return { yourCars: [], paginationDetails: {} };
       }, [data?.data]);
 
       useEffect(() => {
@@ -74,6 +75,7 @@ const RegisteredCarsContainer = () => {
     };
 
     const handleRemoveSort = (event: React.ChangeEvent<unknown>) => {
+        console.log(event)
         if(queryParams.get('page')){
             queryParams.set('page', "1");
         }
@@ -151,19 +153,39 @@ const RegisteredCarsContainer = () => {
                         title="Registered car"
                         isLoading={isLoading} 
                         isError={isError}
-                        isEmpty={!auctionCars?.length}
+                        isEmpty={!yourCars?.length}
                         customEmptyMessage= "You don't have any registered car yet!"
                     >
                         <Grid container>
-                        { auctionCars.map((car: any, index: number) =>
+                        { yourCars.map((car: any, index: number) =>
                         (<Grid item xs={12} md={4}
                         sx={{
                             padding: 2,
                             marginTop: 4,
-                            border: '1px solid #b0e0e6'
+                            border: '1px solid #b0e0e6',
+                            position: 'relative',
                         }}
                         key={index}
                         >
+                            {
+                            car.isCleared &&
+                                <div
+                                style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                zIndex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                }}
+                            >
+                                <CheckCircleIcon sx={{ fontSize: 48, color: '#90EE90' }} />
+                            </div>
+                            }
                             <Stack direction="column" gap={3}>
                                 <img src={car.carImage} alt="" width="100%" height={250} style={{borderRadius: '5px', objectFit: "cover"}}/>
                                 <Stack gap={2}>

@@ -16,6 +16,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import { useFetcher } from "../../redux/api";
 import { useParams, NavLink } from "react-router-dom";
 import DataWidget from "../../utils/DataWidget";
+import IframeComponent from "./elements/IframeComponent";
 
 const AuctionDetailsComponent = () => {
     const { id } = useParams();
@@ -29,7 +30,18 @@ const AuctionDetailsComponent = () => {
         return { detailedCar: {} };
       }, [data?.data]);
 
-    console.log(data);
+    const originalDate = new Date(detailedCar?.auctionDate);
+    const formattedDate = originalDate.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    });
+
+    const date = new Date(detailedCar?.auctionTime);
+    const formattedTime = date.toLocaleString("en-US", {
+    hour: "numeric",
+    hour12: true,
+    });
   return (
     <DataWidget
         title="Auction car"
@@ -87,26 +99,18 @@ const AuctionDetailsComponent = () => {
                             <Stack gap={1} marginTop={2}>
                                 <Stack direction="row" gap={5} alignItems="center">
                                     <Typography variant="body2" color="initial">Date :</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">15th June 2023</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{formattedDate}</Typography>
                                 </Stack>
                                 <Stack direction="row" gap={5} alignItems="center">
                                     <Typography variant="body2" color="initial">Time :</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">14 pm - 17 pm</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{formattedTime}</Typography>
                                 </Stack>
                                 <Stack direction="row" gap={5} alignItems="center">
                                     <Typography variant="body2" color="initial">Location :</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">DownTown Street. Kigali, Rwanda</Typography>
+                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.auctionLocation}</Typography>
                                 </Stack>
                                 <Box>
-                                    <iframe 
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.524683204947!2d30.054986173811802!3d-1.9428721980394905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca5d652c054b9%3A0xf2b5b3bffeb7e9cf!2sDowntown!5e0!3m2!1sen!2srw!4v1686666460915!5m2!1sen!2srw" 
-                                        width="100%" 
-                                        height="300"
-                                        style={{ border: "1px solid #55BDB3" }} 
-                                        allowFullScreen
-                                        loading="lazy" 
-                                        referrerPolicy="no-referrer-when-downgrade">
-                                    </iframe>
+                                    <IframeComponent iframeString={detailedCar.locationMap}/>
                                 </Box>
                              </Stack>
                         </Box> 
@@ -115,11 +119,11 @@ const AuctionDetailsComponent = () => {
                             <Stack direction="row" justifyContent="center" gap={2} sx={{ flexWrap: 'wrap', background: "#55BDB3", padding: 2, borderRadius: 1 }}>
                                 <Stack direction="row" gap={1} alignItems="center" sx={{ borderRight: matcheBigDevices ? '3px solid' : 'none', paddingRight: matcheBigDevices ? 2 : 0 }}>
                                     <PhoneInTalkIcon />
-                                    <Typography variant="body1" color="initial">+250788619790 / +250728619790</Typography>
+                                    <Typography variant="body1" color="initial">{detailedCar.contactPhone1} / {detailedCar.contactPhone2}</Typography>
                                 </Stack>
                                 <Stack direction="row" gap={1} alignItems="center">
                                     <EmailIcon />
-                                    <Typography variant="body1" color="initial">magerwavcc@gmail.com</Typography>
+                                    <Typography variant="body1" color="initial">{detailedCar.contactEmail}</Typography>
                                 </Stack>
                             </Stack>
                         </Box>  

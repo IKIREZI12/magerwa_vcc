@@ -49,16 +49,19 @@ const HomeNavbar = () => {
     }
 
   }, [loggedInUser, FetchUserError, FetchUserLoading]);
+  
 
   const handleLogout = () => {
-    dispatch(logoutUser())
-    if (LogoutSuccess) {
-        setAnchorEl(null);
+    dispatch(logoutUser()).then(() => {
         navigate('/')
-    } 
-    if (LogoutError) {
-        toast.error(LogoutError)
-    } 
+        if (LogoutSuccess) {
+            setAnchorEl(null);
+            toast.success(LogoutSuccess)
+        } 
+        if (LogoutError) {
+            toast.error(LogoutError)
+        } 
+    })
   }
 
   const shortenName = (name: string): string => {

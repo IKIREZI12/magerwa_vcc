@@ -68,8 +68,6 @@ const CarRegistration = () => {
       setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
-    console.log("isSuccess", success);
-
     const handleSelectImage = (name: string, value: string) => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     };
@@ -146,7 +144,8 @@ const CarRegistration = () => {
                 name="carName"
                 type="text"
                 label="Car Name" 
-                fullWidth         
+                fullWidth  
+                required       
                 />
               </Grid>
               <Grid item xs={12} md={4}>
