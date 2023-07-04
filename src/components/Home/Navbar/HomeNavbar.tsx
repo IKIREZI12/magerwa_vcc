@@ -17,6 +17,7 @@ import { StyledBadge } from "./elements/StyledBadge";
 import KeyboardArrowDownSharpIcon from '@mui/icons-material/KeyboardArrowDownSharp';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import MobileMenuLinks from './elements/MobileMenuLinks';
 import MenuLinks from './elements/MenuLinks';
 import { getUser, logoutUser } from '../../../redux/thunks/auth';
@@ -133,6 +134,12 @@ const HomeNavbar = () => {
                     'aria-labelledby': 'basic-button',
                 }}
                 >
+                <MenuItem component="a" href={import.meta.env.VITE_REACT_ADMIN_URL} target="__blank">
+                    <ListItemIcon>
+                        <AdminPanelSettingsIcon/>
+                    </ListItemIcon>
+                    <ListItemText>Admin Panel</ListItemText>
+                </MenuItem>
                 <NavLink to="/yourcars" style={{ textDecoration: "none", color: '#000000DE'}} onClick={handleClose}>
                     <MenuItem>
                         <ListItemIcon>
