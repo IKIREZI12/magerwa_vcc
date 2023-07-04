@@ -134,12 +134,15 @@ const HomeNavbar = () => {
                     'aria-labelledby': 'basic-button',
                 }}
                 >
-                <MenuItem component="a" href={import.meta.env.VITE_REACT_ADMIN_URL} target="__blank">
-                    <ListItemIcon>
-                        <AdminPanelSettingsIcon/>
-                    </ListItemIcon>
-                    <ListItemText>Admin Panel</ListItemText>
-                </MenuItem>
+                {
+                   loggedInUser?.role == "admin" && 
+                   <MenuItem component="a" href={import.meta.env.VITE_REACT_ADMIN_URL} target="__blank">
+                        <ListItemIcon>
+                            <AdminPanelSettingsIcon/>
+                        </ListItemIcon>
+                        <ListItemText>Admin Panel</ListItemText>
+                    </MenuItem>
+                }
                 <NavLink to="/yourcars" style={{ textDecoration: "none", color: '#000000DE'}} onClick={handleClose}>
                     <MenuItem>
                         <ListItemIcon>
