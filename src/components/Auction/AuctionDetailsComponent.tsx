@@ -94,39 +94,60 @@ const AuctionDetailsComponent = () => {
                                 }
                             </Stack>
                         </Box> 
-                        <Box>
-                            <Typography variant="h6" color="primary" marginBottom={3} fontWeight='bold'>Auction Details</Typography>
-                            <Stack gap={1} marginTop={2}>
-                                <Stack direction="row" gap={5} alignItems="center">
-                                    <Typography variant="body2" color="initial">Date :</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">{formattedDate}</Typography>
+                        {
+                           (detailedCar.auctionLocation || detailedCar.auctionDate || detailedCar.auctionTime || detailedCar.locationMap) &&
+                            <Box>
+                                <Typography variant="h6" color="primary" marginBottom={3} fontWeight='bold'>Auction Details</Typography>
+                                <Stack gap={1} marginTop={2}>
+                                    {
+                                      detailedCar.auctionDate &&  
+                                      <Stack direction="row" gap={5} alignItems="center">
+                                        <Typography variant="body2" color="initial">Date :</Typography>
+                                        <Typography variant="body2" color="initial" fontWeight="bold">{formattedDate}</Typography>
+                                      </Stack>
+                                    }
+                                    {
+                                      detailedCar.auctionTime &&  
+                                      <Stack direction="row" gap={5} alignItems="center">
+                                        <Typography variant="body2" color="initial">Time :</Typography>
+                                        <Typography variant="body2" color="initial" fontWeight="bold">{formattedTime}</Typography>
+                                      </Stack>
+                                    }
+                                    {
+                                      detailedCar.auctionLocation &&  
+                                      <Stack direction="row" gap={5} alignItems="center">
+                                        <Typography variant="body2" color="initial">Location :</Typography>
+                                        <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.auctionLocation}</Typography>
+                                      </Stack>
+                                    }
+                                    {
+                                      detailedCar.locationMap &&  
+                                      <Box>
+                                        <IframeComponent iframeString={detailedCar.locationMap}/>
+                                      </Box>
+                                    }
+                                    
                                 </Stack>
-                                <Stack direction="row" gap={5} alignItems="center">
-                                    <Typography variant="body2" color="initial">Time :</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">{formattedTime}</Typography>
+                            </Box>
+                        }
+
+                        {
+                            (detailedCar.contactPhone1 || detailedCar.contactPhone2 || detailedCar.contactEmail) &&
+                            <Box>
+                                <Typography variant="h6" color="primary" marginBottom={3} fontWeight='bold'>Contact Info</Typography>
+                                <Stack direction="row" justifyContent="center" gap={2} sx={{ flexWrap: 'wrap', background: "#55BDB3", padding: 2, borderRadius: 1 }}>
+                                    <Stack direction="row" gap={1} alignItems="center" sx={{ borderRight: matcheBigDevices ? '3px solid' : 'none', paddingRight: matcheBigDevices ? 2 : 0 }}>
+                                        <PhoneInTalkIcon />
+                                        <Typography variant="body1" color="initial">{detailedCar.contactPhone1} / {detailedCar.contactPhone2}</Typography>
+                                    </Stack>
+                                    <Stack direction="row" gap={1} alignItems="center">
+                                        <EmailIcon />
+                                        <Typography variant="body1" color="initial">{detailedCar.contactEmail}</Typography>
+                                    </Stack>
                                 </Stack>
-                                <Stack direction="row" gap={5} alignItems="center">
-                                    <Typography variant="body2" color="initial">Location :</Typography>
-                                    <Typography variant="body2" color="initial" fontWeight="bold">{detailedCar.auctionLocation}</Typography>
-                                </Stack>
-                                <Box>
-                                    <IframeComponent iframeString={detailedCar.locationMap}/>
-                                </Box>
-                             </Stack>
-                        </Box> 
-                        <Box>
-                            <Typography variant="h6" color="primary" marginBottom={3} fontWeight='bold'>Contact Info</Typography>
-                            <Stack direction="row" justifyContent="center" gap={2} sx={{ flexWrap: 'wrap', background: "#55BDB3", padding: 2, borderRadius: 1 }}>
-                                <Stack direction="row" gap={1} alignItems="center" sx={{ borderRight: matcheBigDevices ? '3px solid' : 'none', paddingRight: matcheBigDevices ? 2 : 0 }}>
-                                    <PhoneInTalkIcon />
-                                    <Typography variant="body1" color="initial">{detailedCar.contactPhone1} / {detailedCar.contactPhone2}</Typography>
-                                </Stack>
-                                <Stack direction="row" gap={1} alignItems="center">
-                                    <EmailIcon />
-                                    <Typography variant="body1" color="initial">{detailedCar.contactEmail}</Typography>
-                                </Stack>
-                            </Stack>
-                        </Box>  
+                            </Box>
+                        }
+                          
                 </Stack>
               </Grid>
               <Grid item xs={12} md={4}>

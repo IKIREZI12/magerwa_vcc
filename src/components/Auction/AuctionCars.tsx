@@ -12,7 +12,7 @@ import {
     Pagination,
     useMediaQuery,
     TextField,
-    Divider, Button
+    Divider
 } from "@mui/material"
 import YearFilter from './elements/YearFilter';
 import BrandFilter from './elements/BrandFilter';
@@ -26,7 +26,6 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import DataWidget from "../../utils/DataWidget";
 import { useFetcher } from "../../redux/api";
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useSelector } from "react-redux";
 
 const AuctionCars = () => {
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
@@ -35,7 +34,6 @@ const AuctionCars = () => {
     const queryParams = new URLSearchParams(location.search);
     const [searchQuerry, setSearchQuerry] = useState(queryParams.get('keyword') || '')
     const [currentPage, setCurrentPage] = useState<number>(Number(queryParams.get('page')) || 1);
-    const { loggedInUser } = useSelector((state : any) => state.auth);
     const queryString = `?${queryParams.toString()}`;
     const url = `/auction${queryString}`;
     const { data, isError, isLoading } = useFetcher(url);
@@ -69,7 +67,7 @@ const AuctionCars = () => {
           navigate(newSearch)
     }
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);
         queryParams.set('page', page.toString());
         navigate(`?${queryParams.toString()}`);
@@ -93,7 +91,7 @@ const AuctionCars = () => {
         navigate(`?${queryParams.toString()}`);
       };
 
-    const handleOldestSort = (event: React.ChangeEvent<unknown>) => {
+    const handleOldestSort = (_event: React.ChangeEvent<unknown>) => {
         if(queryParams.get('page')){
             queryParams.set('page', "1");
         }
@@ -102,7 +100,7 @@ const AuctionCars = () => {
         navigate(`?${queryParams.toString()}`);
     };
 
-    const handleRemoveSort = (event: React.ChangeEvent<unknown>) => {
+    const handleRemoveSort = (_event: React.ChangeEvent<unknown>) => {
         if(queryParams.get('page')){
             queryParams.set('page', "1");
         }
@@ -133,17 +131,7 @@ const AuctionCars = () => {
                     <Link underline="hover" color="inherit"></Link>
                     <Typography color="text.primary">Auction</Typography>
                 </Breadcrumbs>
-            </Box>
-            {
-                loggedInUser?.hasRegisteredCar &&
-                <NavLink to="/addtoauction" style={{ textDecoration: "none" }}>
-                    <Link>
-                        <Button variant="contained" color="primary">
-                            Put your car to Auction
-                        </Button>
-                    </Link> 
-                </NavLink>
-            }        
+            </Box>        
         </Card>
         <Grid container spacing={3}>
             {

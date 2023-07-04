@@ -11,21 +11,30 @@ import {
     InputAdornment,
     Pagination,
     useMediaQuery,
-    TextField,
+    TextField, Button,
 } from "@mui/material"
 import SearchIcon from '@mui/icons-material/Search';
 import DataWidget from "../../utils/DataWidget";
-import { useFetcher } from "../../redux/api";
+import { useFetcher, API } from "../../redux/api";
 import { useLocation, useNavigate } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ModalDialog from "./elements/ModalDialog";
+import toast from 'react-hot-toast';
+
+interface Car {
+    _id: string,
+    carName: string;
+  }
 
 const RegisteredCarsContainer = () => {
     const matcheBigDevices = useMediaQuery('(min-width:600px)');
     const location = useLocation();
     const navigate = useNavigate();
+    const [targettedCar, setTargettedCar] = useState<Car | null>(null)
     const queryParams = new URLSearchParams(location.search);
     const [searchQuerry, setSearchQuerry] = useState(queryParams.get('keyword') || '')
     const [currentPage, setCurrentPage] = useState<number>(Number(queryParams.get('page')) || 1);
+    const [isMoveSuccess, setIsMoveSuccess] = useState(false)
     const queryString = `?${queryParams.toString()}`;
     const url = `/registercar/userCars${queryString}`;
     const { data, isError, isLoading } = useFetcher(url);
@@ -35,12 +44,29 @@ const RegisteredCarsContainer = () => {
         }
         return { yourCars: [], paginationDetails: {} };
       }, [data?.data]);
+    const [openMoveModal, setOpenMoveModal] = useState(false);
+    const handleOpenMoveModal = () => {
+        setOpenMoveModal(true);
+    };
+    const handleCloseMoveModal = () => {
+        setOpenMoveModal(false);
+        setTargettedCar(null);
+    };
 
       useEffect(() => {
         if (queryParams.toString() !== '') { 
           window.scrollTo(0, 280);
         }
       }, [location.search]);
+
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          if (isMoveSuccess) {
+            window.location.reload();
+          } 
+        }, 3000);
+        return () => clearTimeout(timer);
+      }, [isMoveSuccess]);
 
     const handleSearchAuction = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -59,13 +85,13 @@ const RegisteredCarsContainer = () => {
           navigate(newSearch)
     }
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);
         queryParams.set('page', page.toString());
         navigate(`?${queryParams.toString()}`);
       };
 
-    const handleOldestSort = (event: React.ChangeEvent<unknown>) => {
+    const handleOldestSort = (_event: React.ChangeEvent<unknown>) => {
         if(queryParams.get('page')){
             queryParams.set('page', "1");
         }
@@ -87,6 +113,22 @@ const RegisteredCarsContainer = () => {
         navigate(`?${queryParams.toString()}`);
     };
 
+    const handleMoveCarToAuction = async () => {
+        try {
+            await toast.promise(
+                API.post(`/registercar/moveToAuction?carId=${targettedCar?._id}&isEndUser=true`),
+                {
+                    loading: `Moving car, please wait...`,
+                    success: `Car successfully moved to auction!`,
+                    error: `Something went wrong while moving this car, please try again!`
+                },
+                { position: 'top-center' }
+            );
+            setIsMoveSuccess(true);
+        } catch (error : any) {
+            toast.error(error.response?.data?.message || error.message || 'Unknown error occured, please try again.')
+        } 
+    }
   return (
     <Box>
         <Card
@@ -188,25 +230,36 @@ const RegisteredCarsContainer = () => {
                             }
                             <Stack direction="column" gap={3}>
                                 <img src={car.carImage} alt="" width="100%" height={250} style={{borderRadius: '5px', objectFit: "cover"}}/>
-                                <Stack gap={2}>
-                                    <Typography 
-                                    variant="body1" 
-                                    color="primary"
-                                    borderRadius={1}
-                                    paddingX={1} 
-                                    width={60}
-                                    fontSize="small"
-                                    textAlign="center"
-                                    border={2}
-                                    >
-                                        {car.condition}
-                                    </Typography>
-                                    <Typography variant="body1" color="initial">
-                                        {car.carName}
-                                    </Typography>
-                                    <Typography variant="body1" color="primary" fontWeight="bold">
-                                        {parseInt(car.carPrice).toLocaleString()} Rwf
-                                    </Typography>
+                                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                    <Stack gap={2}>
+                                        <Typography 
+                                        variant="body1" 
+                                        color="primary"
+                                        borderRadius={1}
+                                        paddingX={1} 
+                                        width={60}
+                                        fontSize="small"
+                                        textAlign="center"
+                                        border={2}
+                                        >
+                                            {car.condition}
+                                        </Typography>
+                                        <Typography variant="body1" color="initial">
+                                            {car.carName}
+                                        </Typography>
+                                        <Typography variant="body1" color="primary" fontWeight="bold">
+                                            {parseInt(car.carPrice).toLocaleString()} Rwf
+                                        </Typography>
+                                    </Stack>
+                                    {
+                                        !car.isCleared &&
+                                        <Button variant="contained" color="primary" onClick={() => {
+                                            handleOpenMoveModal()
+                                            setTargettedCar(car)
+                                        }}>
+                                            Put Car to Auction
+                                        </Button>
+                                    }
                                 </Stack>
                             </Stack>
                         </Grid>
@@ -226,6 +279,17 @@ const RegisteredCarsContainer = () => {
                 </Card>
             </Grid>
         </Grid>
+        <ModalDialog
+        title="Put car to auction?"
+        subTitle={`Are you sure you want to put this car to auction?`}
+        item={targettedCar?.carName}
+        open={openMoveModal}
+        handleClose={handleCloseMoveModal}
+        handleClickOk={() => {
+          handleCloseMoveModal();
+          handleMoveCarToAuction();
+      }}
+      />
     </Box>
   )
 }
