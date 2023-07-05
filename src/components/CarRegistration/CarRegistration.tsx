@@ -31,7 +31,7 @@ import { carFeaturesData } from "./elements/CarFeatures";
 import { useDispatch, useSelector } from "react-redux";
 import toast from 'react-hot-toast';
 import { RegisterCar } from "../../redux/thunks/registercar";
-import { CalculateTax } from "./elements/CalculateTax";
+import TaxCalculator from "./elements/TaxCalculator";
 import TaxModal from "./elements/TaxModal";
 
 const initialState = { 
@@ -500,7 +500,7 @@ const CarRegistration = () => {
         <TaxModal
         title="Required Tax"
         subTitle={`To get this car cleared from Magerwa VCC you are going to have to pay an amount of:`}
-        item={ CalculateTax(formData).toLocaleString() + " Rwf" }
+        item={ TaxCalculator(formData)?.toLocaleString() + " Rwf" }
         open={openMoveModal}
         handleClose={() => {
           handleCloseMoveModal();
