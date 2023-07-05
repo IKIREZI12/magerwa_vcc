@@ -31,6 +31,8 @@ import { carFeaturesData } from "./elements/CarFeatures";
 import { useDispatch, useSelector } from "react-redux";
 import toast from 'react-hot-toast';
 import { RegisterCar } from "../../redux/thunks/registercar";
+import { CalculateTax } from "./elements/CalculateTax";
+import TaxModal from "./elements/TaxModal";
 
 const initialState = { 
   carName: '',
@@ -63,6 +65,13 @@ const CarRegistration = () => {
     const [messageColor, setMessageColor] = useState('initial');  
     const { success , loading, error } = useSelector((state : any) => state.carRegistration);
     const dispatch = useDispatch<any>();
+    const [openMoveModal, setOpenMoveModal] = useState(false);
+    const handleOpenMoveModal = () => {
+        setOpenMoveModal(true);
+    };
+    const handleCloseMoveModal = () => {
+        setOpenMoveModal(false);
+    };
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -471,10 +480,37 @@ const CarRegistration = () => {
         </Card>
         { message && <Typography variant="body1" textAlign="center" marginTop={4} marginBottom={-2} color={messageColor}>{message}</Typography> }
         <Stack justifyContent='center' alignItems="center" marginTop={5}>
-            <LoadingButton variant="contained" loading={loading} onClick={handelSubmit} color="primary" sx={{ width: matcheBigDevices ? '40%' : '100%' }}>
+            <LoadingButton variant="contained" loading={loading} onClick={() => {
+              if (
+                Object.values(formData).some((value) =>
+                  Array.isArray(value) ? value.some((item) => item.trim() === '') : value.trim() === ''
+                )
+              ) {
+                toast.error('Please fill in all the required fields!');
+              }
+              else {
+                handleOpenMoveModal()
+              }
+              
+            }
+              } color="primary" sx={{ width: matcheBigDevices ? '40%' : '100%' }}>
                 Register my car
             </LoadingButton>
         </Stack>
+        <TaxModal
+        title="Required Tax"
+        subTitle={`To get this car cleared from Magerwa VCC you are going to have to pay an amount of:`}
+        item={ CalculateTax(formData).toLocaleString() + " Rwf" }
+        open={openMoveModal}
+        handleClose={() => {
+          handleCloseMoveModal();
+          window.location.reload();
+        }}
+        handleClickOk={() => {
+          handelSubmit();
+          handleCloseMoveModal(); 
+      }}
+      />
     </Box>
   )
 }
