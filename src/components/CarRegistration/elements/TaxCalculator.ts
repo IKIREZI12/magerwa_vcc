@@ -9,10 +9,11 @@ interface CarFormData {
   mileage: string;
   engineCapacity: string;
   carPrice: string;
+  condition: string;
 }
 
 const TaxCalculator: React.FC<CarFormData> = (formData: CarFormData) : number => {
-  const { data, isError, isLoading } = useFetcher('/taxes');
+  const { data, isError, isLoading } = useFetcher(`/taxes?carCondition=${formData.condition}`);
   const databaseValues = useMemo(() => {
     if (data?.data) {
       return data?.data[0];

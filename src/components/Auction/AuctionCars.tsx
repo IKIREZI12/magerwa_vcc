@@ -16,6 +16,7 @@ import {
 } from "@mui/material"
 import YearFilter from './elements/YearFilter';
 import BrandFilter from './elements/BrandFilter';
+import MileageFilter from "./elements/MileageFilter";
 import SearchIcon from '@mui/icons-material/Search';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BrandingWatermarkIcon from '@mui/icons-material/BrandingWatermark';
@@ -91,6 +92,15 @@ const AuctionCars = () => {
         navigate(`?${queryParams.toString()}`);
       };
 
+    const handleMileageFilter = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        if(queryParams.get('page')){
+            queryParams.set('page', "1");
+        }
+        queryParams.set('mileage', value);
+        navigate(`?${queryParams.toString()}`);
+      };
+
     const handleOldestSort = (_event: React.ChangeEvent<unknown>) => {
         if(queryParams.get('page')){
             queryParams.set('page', "1");
@@ -147,6 +157,7 @@ const AuctionCars = () => {
                     <Divider variant="fullWidth" color="initial"/>
                     <YearFilter filteredYear={queryParams.get('year')} handleFilterYear={handleYearFilter}/>
                     <BrandFilter filteredBrand={queryParams.get('brand')} handleFilterBrand={handleBrandFilter}/>
+                    <MileageFilter filteredMileage={queryParams.get('mileage')} handleFilterMileage={handleMileageFilter}/>
                 </Card>
             </Grid>
             }

@@ -36,7 +36,7 @@ import TaxModal from "./elements/TaxModal";
 
 const initialState = { 
   carName: '',
-  condition: '',
+  condition: 'New',
   bodyType: '',
   brand: '',
   model: '',
@@ -123,6 +123,8 @@ const CarRegistration = () => {
       return () => clearTimeout(timer);
     }, [success]);
 
+    const totalTax : any = TaxCalculator(formData);
+
   return (
     <Box>
         <Card
@@ -165,6 +167,7 @@ const CarRegistration = () => {
                         aria-labelledby="demo-row-radio-buttons-group-label"
                         onChange={handleChange}
                         name="condition"
+                        value={formData.condition}
                     >
                         <FormControlLabel value="New" control={<Radio />} label="New" />
                         <FormControlLabel value="Used" control={<Radio />} label="Used" />
@@ -499,8 +502,8 @@ const CarRegistration = () => {
         </Stack>
         <TaxModal
         title="Required Tax"
-        subTitle={`To get this car cleared from Magerwa VCC you are going to have to pay an amount of:`}
-        item={ TaxCalculator(formData)?.toLocaleString() + " Rwf" }
+        subTitle={`The imposed tax on your car is an amount of ${totalTax?.toLocaleString() + " Rwf"}. To get this car cleared from Magerwa VCC you are going to pay a total amount of:`}
+        item={`${(totalTax + parseFloat(formData?.carPrice))?.toLocaleString()} Rwf`}
         open={openMoveModal}
         handleClose={() => {
           handleCloseMoveModal();
